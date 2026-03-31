@@ -89,10 +89,18 @@ export default function MLTrain({ webcamRef }) {
     // Reference to update isRunning
     const isRunningRef = useRef(isRunning);
 
-    // Updating reference
+     // Reference to update confidenceThresholdRef - for the slider to update when changed mid-game.
+    const confidenceThresholdRef = useRef(confidenceThreshold); 
+
+    // Updating isRunningRef reference
     useEffect(() => {
         isRunningRef.current = isRunning;
     }, [isRunning]);
+
+    //updating confidenceThresholdRef reference
+    useEffect(() => {
+        confidenceThresholdRef.current = confidenceThreshold;
+    }, [confidenceThreshold]);
 
     // Loop to predict direction
     async function runPredictionLoop() {
@@ -109,12 +117,12 @@ export default function MLTrain({ webcamRef }) {
                     confidence: result.confidence,
                     predictedClass: result.predictedClass,
                     predictedClassName: classNames[result.predictedClass],   // convert classId -> readable names
-                    isAboveThreshold: result.confidence >= confidenceThreshold,
+                    isAboveThreshold: result.confidence >= confidenceThresholdRef.current,
                     probabilities : result.probabilities,
                 });
 
                 // We only update the game direction if confidence is high enough
-                if( result.confidence >= confidenceThreshold){
+                if( result.confidence >= confidenceThresholdRef.current){
                     setPredictionDirection(result.direction);
                 }
 
