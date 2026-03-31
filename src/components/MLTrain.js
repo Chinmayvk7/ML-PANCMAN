@@ -23,6 +23,9 @@ import {
     imgSrcArrAtom,
     gameRunningAtom,
     predictionAtom,
+    confidenceThresholdAtom,
+    confidenceStatusAtom,       
+    predictionResultsAtom, 
 } from "../GlobalState";
 import { useAtom } from "jotai";
 import { data, train } from "@tensorflow/tfjs";
@@ -64,6 +67,9 @@ export default function MLTrain({ webcamRef }) {
     const [hiddenUnits, setHiddenUnits] = useAtom(hiddenUnitsAtom);
     const [isRunning] = useAtom(gameRunningAtom);
     const [, setPredictionDirection] = useAtom(predictionAtom);
+    const [confidenceThreshold] = useAtom(confidenceThresholdAtom);
+    const [, setConfidenceStatus] = useAtom(confidenceStatusAtom);
+    const [, setPredictionResults] = useAtom(predictionResultsAtom);
 
     // ---- Model Training ----
     const [model, setModel] = useAtom(modelAtom);
@@ -91,9 +97,31 @@ export default function MLTrain({ webcamRef }) {
     // Loop to predict direction
     async function runPredictionLoop() {
         while (isRunningRef.current) {
-            setPredictionDirection(
-                await predictDirection(webcamRef, truncatedMobileNet, model)
-            );
+
+            // We store result instead to directly using it 
+            const result = await predictDirection(webcamRef, truncatedMobileNet, model);
+
+            if(result){
+                const classNames = ['up', 'down', 'left', 'right'];
+
+                // update the confidence status diplay, that way the user sees the current confidence
+                setConfidenceStatus({
+                    confidence: result.confidence,
+                    predictedClass: result.predictedClass,
+                    predictedClassName: classNames[result.predictedClass],   // convert classId -> readable names
+                    isAboveThreshold: result.confidence >= confidenceThreshold,
+                    probabilities : result.probabilities,
+                });
+
+                // We only update the game direction if confidence is high enough
+                if( result.confidence >= confidenceThreshold){
+                    setPredictionDirection(result.direction);
+                }
+
+                // If confidence is below the threshold, we don't update predictionAtom
+                // Update Pac-Man in such a way that it keeps its last direction (pauses in terms of new input)
+            }
+
             await new Promise((resolve) => setTimeout(resolve, 250));
         }
     }
