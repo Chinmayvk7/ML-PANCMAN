@@ -134,11 +134,29 @@ export async function buildModel(
 }
 
 export async function predict(truncatedMobileNet, model, img) {
+
+  // Now we return classId AND confidence scores:
   const embeddings = truncatedMobileNet.predict(img);
-  const predictions = await model.predict(embeddings);
-  const predictedClass = predictions.as1D().argMax();
-  const classId = (await predictedClass.data())[0];
-  return classId;
+  const predictions = model.predict(embeddings);
+
+  // Fetch the full probability array ( 4 values, one per class) 
+  const probabilities = await predictions.data();
+
+  // Now we find the class having the highest probability
+  const classId = probabilities.indexOf(Math.max(...probabilities));
+
+  //Get the confidence (Highest probability value)
+  const confidence = Math.max(...probabilities);
+
+  embeddings.dispose();
+  predictions.dispose();
+
+  
+  return {
+    classId,                  // 0, 1, 2, or 3
+    confidence,               // 0.0 to 1.0 (We basically fetch the max prob) 
+    probabilities: Array.from(probabilities)      // converts Float32Array of TF.js -> normal js array    
+  };
 }
 
 export async function predictDirection(webcamRef, truncatedMobileNet, model) {
@@ -147,19 +165,24 @@ export async function predictDirection(webcamRef, truncatedMobileNet, model) {
     const imgTensor = await base64ToTensor(newImageSrc);
     const prediction = await predict(truncatedMobileNet, model, imgTensor);
 
-    switch (prediction) {
-      case 0:
-        return 1;
-      case 1:
-        return 3;
-      case 2:
-        return 2;
-      case 3:
-        return 0;
-      default:
-        return -1;
-    }
+    imgTensor.dispose();
+
+    // map class index to game direction
+    // Class : 0 = up, 1 = down, 2 = left, 3 = right
+    // game direction: 0 = right, 1 = up, 2 = left, 3 = down
+
+    const directionMap = { 0: 1, 1: 3, 2: 2, 3: 0};
+    const direction = directionMap[prediction.classId] ?? -1;
+
+    return{
+      direction,                              // game direction number (0-3)
+      confidence : prediction.confidence,     // 0.0 to 1.9
+      probabilities : prediction.probabilities,  // [up, down, left, right]
+      predictedClass : prediction.classId       // 0-3 ( which gesture class)
+    };
   }
+
+return null;
 }
 
 export async function base64ToTensor(base64) {
