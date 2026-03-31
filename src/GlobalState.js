@@ -19,4 +19,14 @@ export const lossAtom = atom(null); // Loss value
 export const trainingProgressAtom = atom(-1); // Training progress
 export const stopTrainingAtom = atom(false); // Flag to stop training
 
+// ---- Imporvement 1: Prediction Matrix ----
+export const predictionResultsAtom = atom([]); // Array of prediction results for training data
+
+// ---- Improvement 2: Confidence Gate ----
+export const confidenceThresholdAtom = atom(0.5) // Default 50% threshold
+export const confidenceStatusAtom = atom({
+    confidence : 0, 
+    predictedClass : -1, 
+    isAboveThreshold : true
+});
 
