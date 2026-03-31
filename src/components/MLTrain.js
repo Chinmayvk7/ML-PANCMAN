@@ -6,6 +6,7 @@ import {
     Grid,
     Typography,
     LinearProgress,
+    Box
 } from "@mui/material";
 import React, { useEffect, useState, Suspense, useRef } from "react";
 import { buildModel, processImages, predictDirection } from "../model";
@@ -67,7 +68,7 @@ export default function MLTrain({ webcamRef }) {
     const [hiddenUnits, setHiddenUnits] = useAtom(hiddenUnitsAtom);
     const [isRunning] = useAtom(gameRunningAtom);
     const [, setPredictionDirection] = useAtom(predictionAtom);
-    const [confidenceThreshold] = useAtom(confidenceThresholdAtom);
+    const [confidenceThreshold, setConfidenceThreshold] = useAtom(confidenceThresholdAtom);
     const [, setConfidenceStatus] = useAtom(confidenceStatusAtom);
     const [, setPredictionResults] = useAtom(predictionResultsAtom);
 
@@ -193,6 +194,26 @@ export default function MLTrain({ webcamRef }) {
                     LOSS: {lossVal === null ? "" : lossVal} <br />
                     Dataset Size: {imgSrcArr.length} <br />
                 </Typography>
+                {/* Confidence Threshold Slider - Improvement 2*/}
+                <Box sx = {{ mt: 2, mb: 1}}>
+                    <Typography variant="body2" gutterBottom>
+                        Confidence Threshold: {Math.round(confidenceThreshold*100)}%
+                    </Typography>
+                    <input
+                        type = "range"
+                        min = "0.2"
+                        max = "0.95"
+                        step = "0.05"
+                        value = {confidenceThreshold}
+                        onChange={(e) => setConfidenceThreshold(parseFloat(e.target.value))}
+                        style = {{width: '75%' }}
+                        />
+                        <Typography variant="caption" display="block" color="text.secondary">
+                            Low = aggressive (moves on low confidence) | High = conservative (only moves on clear gestures)
+                        </Typography>
+                </Box>
+
+
                 {/* <JSONWriter /> <br /> */}
             </Grid>
             <Grid item xs={6}>
