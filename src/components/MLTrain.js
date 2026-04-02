@@ -9,7 +9,7 @@ import {
     Box
 } from "@mui/material";
 import React, { useEffect, useState, Suspense, useRef } from "react";
-import { buildModel, processImages, predictDirection } from "../model";
+import { buildModel, processImages, predictDirection, predictAllTrainingData } from "../model";
 import {
     batchArrayAtom,
     trainingProgressAtom,
@@ -148,14 +148,19 @@ export default function MLTrain({ webcamRef }) {
     async function trainModel() {
         setTrainingProgress("Stop");
         const dataset = await processImages(imgSrcArr, truncatedMobileNet);
-        const model = await buildModel(truncatedMobileNet,
+        const trainedModel = await buildModel(
+            truncatedMobileNet,
             setLossVal,
             dataset,
             hiddenUnits,
             batchSize,
             epochs,
-            learningRate)
-        setModel(model);
+            learningRate
+        );
+        setModel(trainedModel);
+
+        const results = await predictAllTrainingData(truncatedMobileNet, trainedModel, imgSrcArr);
+        setPredictionResults(results);
     }
 
     const stopTrain = () => {
