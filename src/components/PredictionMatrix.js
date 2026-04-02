@@ -50,4 +50,103 @@ export default function PredictionMatrix(){
         .filter(c => c.total > 0)   // remove classes with zero examples
         .sort((a,b) => parseFloat(a.accuracy) - parseFloat(b.accuracy))[0];  // convert string -> number, then sort by ascending order and take the first element
 
+    return (
+        <Box sx = {{
+            mt: 2,
+            p: 2,
+            borderRadius: 2,
+            backgroundColor: '#fafafa'
+        }}>
+
+            <Typography variant="h6" gutterBottom>
+                Training Data Analysis
+            </Typography>
+
+            {/* Summary row */}
+            <Box sx = {{
+                display: 'flex',
+                gap: 2,
+                mb:2,
+                flexWrap: 'wrap'
+            }}>
+
+                <Chip
+                    label = {`Overall: ${totalCorrect}/${results.length} correct (${accuracy}%)`}
+                    color={parseFloat(accuracy) > 80 ? 'success' : parseFloat(accuracy) > 60 ? 'warning' : 'error'}
+                />
+                {worstClass && (
+                    <Chip
+                        label ={ `Weakest: ${worstClass.name.toUpperCase()} (${worstClass.accuracy}%)`}
+                        color ='warning'
+                        variant="outlined"
+                    />
+                )}
+            </Box>    
+
+            {/* Controls */}
+
+            <Box sx = {{
+                display: 'flex',
+                gap: 1,
+                mb: 2,
+                flexWrap: 'wrap'
+            }}>
+                <Button
+                    size="small"
+                    variant={sortBy === 'default' ? 'contained' : 'outlined'}
+                    onClick={() => setSortBy('default')}
+                >
+                    Default Order
+                </Button>
+                <Button
+                    size="small"
+                    variant = {sortBy === 'confidence' ? 'contained' : 'outlined'}
+                    onClick={() => setSortBy('confidence')}
+                >
+                    Sort by Confidence ↑
+                </Button>
+                <Box sx = {{mb: 1, borderleft: '1px solid #ccc' }} />
+                <Button
+                    size ="small"
+                    variant={filterClass === 'all' ? 'contained' : 'outlined'}
+                    onClick={() => setFilterClass('all')}
+                >
+                    All
+                </Button>
+                {CLASS_NAMES.map(cls =>(
+                    <Button
+                        key={cls}
+                        size="small"
+                        variant={filterClass === cls ? 'contained': 'outlined'}
+                        onClick={() => setFilterClass(cls)}
+                    >
+                        {cls.toUpperCase()} ({classAccuracies.find(c => c.name === cls)?.total || 0})
+                    </Button>
+                ))}
+            </Box>
+
+            {/* Results table */}
+            <Box sx ={{ maxheight: '400px', overflowY: 'auto'}}>     
+                {/* header row */}
+                <Box sx ={{display: 'flex', alignItems: 'center', p: 0.5, borderBottom: '2px solid #ccc', postion: 'sticky', top: 0, backgroundColor: '#fafafa', zIndex: 1 }}>
+                    <Box sx = {{ width: 70, flexShrink: 0, fontSize: 12, fontWeight: 'bold'}}>Image</Box>
+                    <Box sx = {{ width: 60, flexShrink: 0, fontSize: 12, fontWeight: 'bold' }}>Label</Box>
+                    {CLASS_NAMES.map(cls => (
+                        <Box key = {cls} sx = {{ flex:1, fontSize: 12, fontWeight: 'bold', textAlign: 'center'}}>
+                            {cls.toUpperCase()}
+                        </Box>    
+                    ))}
+                    <Box sx ={{ width:40, flexShrink: 0, fontSize: 12, fontWeight: 'bold', textAlign: 'center'}}>OK?</Box>
+                </Box>
+
+                {/* Data rows */}
+                {displayResults.map((result, index) => (
+                    <PredictionRow key = {index} result = {result} />
+                ))}
+            </Box>
+        </Box>
+    );
 }
+                
+
+
