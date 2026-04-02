@@ -185,6 +185,36 @@ export async function predictDirection(webcamRef, truncatedMobileNet, model) {
 return null;
 }
 
+export async function predictAllTrainingData(truncatedMobileNet, model, imgSrcArr){
+  const classNames = ['up', 'down', 'left', 'right'];
+  const results = [];
+
+  for(const example of imgSrcArr){
+      const imgTensor = await base64ToTensor(example.src);
+      const prediction = await predict(truncatedMobileNet, model, imgTensor);
+      imgTensor.dispose();
+
+      const trueLabelIndex = classNames.indexOf(example.label);
+
+      results.push({
+        thumbnail: example.src,                     // base64  image for display
+        trueLabel: example.label,                   // 'up', 'down', 'left', 'right' 
+        trueLabelIndex: trueLabelIndex,             // 0, 1, 2, 3
+        predictedClass: prediction.classId,         // 0, 1, 2, 3
+        predictedClassName: classNames[prediction.classId],
+        probabilities: prediction.probabilities,    // [upConf, downConf, leftConf, rightConf]
+        confidence: prediction.confidence,          // max probability 
+        correct: prediction.classId === trueLabelIndex,   // check whether the model got it right?
+      });
+  }
+
+  return results;
+}
+
+
+
+
+
 export async function base64ToTensor(base64) {
   return new Promise((resolve, reject) => {
     const img = new Image(224, 224);
