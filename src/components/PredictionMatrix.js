@@ -128,7 +128,7 @@ export default function PredictionMatrix(){
             {/* Results table */}
             <Box sx ={{ maxHeight: '400px', overflowY: 'auto'}}>     
                 {/* header row */}
-                <Box sx ={{display: 'flex', alignItems: 'center', p: 0.5, borderBottom: '2px solid #ccc', postion: 'sticky', top: 0, backgroundColor: '#fafafa', zIndex: 1 }}>
+                <Box sx ={{display: 'flex', alignItems: 'center', p: 0.5, borderBottom: '2px solid #ccc', position: 'sticky', top: 0, backgroundColor: '#fafafa', zIndex: 1 }}>
                     <Box sx = {{ width: 70, flexShrink: 0, fontSize: 12, fontWeight: 'bold'}}>Image</Box>
                     <Box sx = {{ width: 60, flexShrink: 0, fontSize: 12, fontWeight: 'bold' }}>Label</Box>
                     {CLASS_NAMES.map(cls => (
@@ -209,7 +209,7 @@ function PredictionRow({result}){
 
                             <Box sx ={{
                                 width: `${Math.round(prob*100)}%`,
-                                hegiht: '100%',
+                                height: '100%',
                                 borderRadius: 1,
                                 backgroundColor: isThisTheTrue ? '#4caf50' : (isThisThePredicted ? '#f44336' : '#bdbdbd'), 
                                 transition: 'width 0.2s',           
