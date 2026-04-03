@@ -59,7 +59,7 @@ export default function ConfidenceDisplay() {
                 <Typography variant="caption" color = "text.secondary">
                     {isConfident
                         ? 'Confident - Pac-Man is moving'
-                        : `Below ${math.round(threshold*100)}% threshold - Pac-Man paused`
+                        : `Below ${Math.round(threshold*100)}% threshold - Pac-Man paused`
                     }
                 </Typography>
 
@@ -80,7 +80,7 @@ export default function ConfidenceDisplay() {
                                         color: i === status.predictedClass ? '#1976d2' : 'text.secondary',
                                 }}
                             >
-                                {name}: {Math.round(status.probabilities*100)}%
+                                {name}: {Math.round(status.probabilities[i] * 100)}%
                         </Typography>
                     ))}
                 </Box>
