@@ -10,8 +10,6 @@ import { useState, useRef } from "react";
 import { useAtom } from "jotai";
 import {
     imgSrcArrAtom,
-    dataSetSizeAtom,
-    batchArrayAtom,
     batchSizeAtom,
     gameRunningAtom,
 } from "../GlobalState";
