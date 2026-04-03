@@ -1,7 +1,7 @@
 import {useAtom} from "jotai";
 import { confidenceStatusAtom, confidenceThresholdAtom } from "../GlobalState";
 import {Box, Typography} from "@mui/material";
-import { BoySharp } from "@mui/icons-material";
+
 
 export default function ConfidenceDisplay() {
     const [status] = useAtom(confidenceStatusAtom);
@@ -23,7 +23,7 @@ export default function ConfidenceDisplay() {
                     mt : 1,
                     mb : 1,
                     borderRadius: 1,
-                    border : `2px solid $(isConfident ? '#4caf50' : '#ff9800')`,
+                    border: `2px solid ${isConfident ? '#4caf50' : '#ff9800'}`,
                     backgroundColor : isConfident ? '#e8f5e9' : '#fff3e0',
                     textAlign : 'center',
             }}
@@ -43,8 +43,8 @@ export default function ConfidenceDisplay() {
                         borderRadius: 1,
                         height: 12                                  // Outer Box - height
             }}>
-                /* Inner box - we are filling the bar (filed bar according to the confidence %) 
-                   AND changing the color (Red or Orange) of the filled bar wrt the confidence */
+                {/* Inner box - we are filling the bar (filed bar according to the confidence %) 
+                   AND changing the color (Red or Orange) of the filled bar wrt the confidence */}
                 <Box 
                     sx = {{
                         width: `${confidencePercent}%`,
