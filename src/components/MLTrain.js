@@ -11,7 +11,6 @@ import {
 import React, { useEffect, useState, Suspense, useRef } from "react";
 import { buildModel, processImages, predictDirection, predictAllTrainingData } from "../model";
 import {
-    batchArrayAtom,
     trainingProgressAtom,
     lossAtom,
     modelAtom,
