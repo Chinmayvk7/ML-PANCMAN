@@ -131,7 +131,7 @@ export default function MLTrain({ webcamRef }) {
                 // Update Pac-Man in such a way that it keeps its last direction (pauses in terms of new input)
             }
 
-            await new Promise((resolve) => setTimeout(resolve, 400));
+            await new Promise((resolve) => setTimeout(resolve, 350));
         }
     }
 
@@ -147,7 +147,14 @@ export default function MLTrain({ webcamRef }) {
     // Train the model when called
     async function trainModel() {
         setTrainingProgress("Stop");
-        const dataset = await processImages(imgSrcArr, truncatedMobileNet);
+
+        // Split data: 80% training data, 20% testing data
+        const shuffled = [...imgSrcArr].sort(() => Math.random() - 0.5);
+        const splitIndex = Math.floor(shuffled.length*0.8);
+        const trainData = shuffled.slice(0, splitIndex);
+        const testData = shuffled.slice(splitIndex);
+
+        const dataset = await processImages(trainData, truncatedMobileNet);
         const trainedModel = await buildModel(
             truncatedMobileNet,
             setLossVal,
@@ -159,7 +166,7 @@ export default function MLTrain({ webcamRef }) {
         );
         setModel(trainedModel);
 
-        const results = await predictAllTrainingData(truncatedMobileNet, trainedModel, imgSrcArr);
+        const results = await predictAllTrainingData(truncatedMobileNet, trainedModel, testData);
         setPredictionResults(results);
     }
 
