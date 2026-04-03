@@ -30,6 +30,7 @@ import {
 } from "../GlobalState";
 import { useAtom } from "jotai";
 import { data, train } from "@tensorflow/tfjs";
+import PredictionMatrix from "./PredictionMatrix";
 // import JSONWriter from "./JSONWriter";
 // import JSONLoader from "./JSONLoader";
 
@@ -263,6 +264,7 @@ export default function MLTrain({ webcamRef }) {
     return (
         <Suspense fallback={<div>Loading...</div>}>
             {imgSrcArr.length === 0 ? EmptyDatasetDisaply : ReguarlDisplay}
+            <PredictionMatrix />
         </Suspense>
     );
 }
