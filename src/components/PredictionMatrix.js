@@ -1,7 +1,7 @@
 import { useAtom } from "jotai";
 import { predictionResultsAtom } from "../GlobalState";
 import { Box, Typography, Button, Chip} from "@mui/material";
-import { Component, useState } from "react";  
+import { useState } from "react";  
   // useState() takes an argument that serves as the starting value of the state variable
   // - useState hook is a function that returns a array containing 
   // state variable as well as a function to update the value of that state variable
@@ -126,7 +126,7 @@ export default function PredictionMatrix(){
             </Box>
 
             {/* Results table */}
-            <Box sx ={{ maxheight: '400px', overflowY: 'auto'}}>     
+            <Box sx ={{ maxHeight: '400px', overflowY: 'auto'}}>     
                 {/* header row */}
                 <Box sx ={{display: 'flex', alignItems: 'center', p: 0.5, borderBottom: '2px solid #ccc', postion: 'sticky', top: 0, backgroundColor: '#fafafa', zIndex: 1 }}>
                     <Box sx = {{ width: 70, flexShrink: 0, fontSize: 12, fontWeight: 'bold'}}>Image</Box>
