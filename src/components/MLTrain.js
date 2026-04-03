@@ -131,7 +131,7 @@ export default function MLTrain({ webcamRef }) {
                 // Update Pac-Man in such a way that it keeps its last direction (pauses in terms of new input)
             }
 
-            await new Promise((resolve) => setTimeout(resolve, 250));
+            await new Promise((resolve) => setTimeout(resolve, 400));
         }
     }
 
