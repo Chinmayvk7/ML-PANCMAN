@@ -2,6 +2,7 @@ import React from "react";
 import PacMan from "./components/PacMan";
 import MLTrain from "./components/MLTrain";
 import DataCollection from "./components/DataCollection";
+import ConfidenceDisplay from "./components/ConfidenceDisplay";
 import {
     Box,
     CssBaseline,
@@ -72,6 +73,7 @@ export default function App() {
                         <Grid item xs={12} md={6} lg={6}>
                             <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
                                 <PacMan />
+                                <ConfidenceDisplay />
                             </Paper>
                         </Grid>
                     </Grid>
