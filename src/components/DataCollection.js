@@ -12,6 +12,8 @@ import {
     imgSrcArrAtom,
     batchSizeAtom,
     gameRunningAtom,
+    modelAtom,
+    predictionResultsAtom
 } from "../GlobalState";
 
 const DIRECTIONS = {
@@ -31,6 +33,10 @@ export default function DataCollection({ webcamRef }) {
     const [, setBatchSize] = useAtom(batchSizeAtom);
     const [gameRunning] = useAtom(gameRunningAtom);
 
+    // For the Reset button and Stop game button improvement
+    const [, setModel] = useAtom(modelAtom);
+    const [, setPredictionResults] = useAtom(predictionResultsAtom);
+
     // ---- UI Display ----
 
     const capture = (direction) => async () => {
@@ -44,6 +50,15 @@ export default function DataCollection({ webcamRef }) {
             const newImageArr = [...imgSrcArr, { src: newImageSrc, label: direction }];
             setImgSrcArr(newImageArr);
             setBatchSize(Math.floor(newImageArr.length * 0.4));
+        }
+    };
+
+
+    const handleReset = () => {
+        if(window.confirm('Reset all training data and model? This cannot be undone.')){
+            setImgSrcArr([]);
+            setModel(null);
+            setPredictionResults([]);
         }
     };
 
@@ -87,6 +102,16 @@ export default function DataCollection({ webcamRef }) {
                     >
                         {" "}
                         {isCameraOn ? "Stop" : "Start"} Camera
+                    </Button>
+
+                    <Button
+                        variant="outlined"
+                        color='error'
+                        onClick={handleReset}
+                        disabled={ gameRunning || imgSrcArr.length === 0}
+                        sx = {{ ml: 1 }}
+                    > 
+                        🔄 Reset All
                     </Button>
                 </Box>
                 <Box sx={{ marginTop: 1 }}>
