@@ -40,16 +40,35 @@ export default class PacmanCovid extends Component {
     window.addEventListener("keydown", this.onKey);
   }
 
-  componentDidUpdate(prevProps) {
+componentDidUpdate(prevProps) {
+    // START the game — fresh reset every time
     if (prevProps.isRunning !== this.props.isRunning && this.props.isRunning) {
-      this.setState({ stepTime: Date.now() });
-      this.step();
+        // Clear any running timers from previous games
+        clearTimeout(this.timers.animate);
+        clearTimeout(this.timers.start);
+
+        // Reset to fresh game state, THEN start the loop in the callback
+        this.setState({
+            ...getInitialState(),
+            stepTime: Date.now(),
+            isShowDialog: false
+        }, () => {
+            // This callback runs AFTER state is updated — game loop uses fresh state
+            this.step();
+        });
     }
+
+    // STOP the game
+    if (prevProps.isRunning && !this.props.isRunning) {
+        clearTimeout(this.timers.animate);
+        this.timers.animate = null;
+    }
+
+    // Handle prediction direction changes
     if (prevProps.predictions !== this.props.predictions) {
-      console.log(this.props.predictions);
-      this.changeDirection(this.props.predictions);
+        this.changeDirection(this.props.predictions);
     }
-  }
+}
 
   step() {
     const result = animate(this.state);
