@@ -1,4 +1,4 @@
-import { Button, Typography } from "@mui/material";
+import { Button, Typography, Box } from "@mui/material";
 import "../lib/PacmanCovid/styles/index.scss";
 import PacmanCovid from "../lib/PacmanCovid";
 import { gameRunningAtom, predictionAtom, modelAtom, imgSrcArrAtom } from "../GlobalState";
@@ -22,7 +22,7 @@ export default function PacMan() {
     // Condition in order to start playing the game
     const hasEnoughData = minExamples >= 8;
     const isImbalanced = maxExamples > minExamples * 3 && minExamples > 0;
-    const canPlay = model != null && hasEnoughData;
+    const canPlay = model !== null && hasEnoughData;
 
     const pacManProps = {
         gridSize: 17,
@@ -41,18 +41,47 @@ export default function PacMan() {
                 setIsRuning={setIsRuning}
                 predictions={predictionDirection}
             />
+
+            {/* STOP GAME button — only visible WHILE game is running */}
+            {isRunning && (
+                <Button
+                    variant="contained"
+                    color="error"
+                    onClick={() => setIsRuning(false)}
+                    fullWidth
+                    sx={{ mt: 1 }}
+                >
+                    ⬛ Stop Game
+                </Button>
+            )}
+
+            {/* START section — only visible when game is NOT running */}
             {!isRunning && (
                 <>
-                    {isImbalanced &&(
-                        <Typography variant="caption" color="warning.main" sx = {{ display: 'block', mb: 1, textAlign: 'center'}}>
-                            ⚠ Class imbalance: {['Up','Down','Left','Right'].map((name, i) =>
-                            `${name}: ${classCounts[i]}`).join(', ')}
-                        </Typography>
+                    {/* Class imbalance warning */}
+                    {isImbalanced && (
+                        <Box sx={{
+                            p: 1,
+                            mt: 1,
+                            mb: 1,
+                            backgroundColor: '#fff3e0',
+                            border: '1px solid #ff9800',
+                            borderRadius: 1,
+                            textAlign: 'center',
+                        }}>
+                            <Typography variant="body2" color="warning.main" fontWeight="bold">
+                                ⚠ Class imbalance: {['Up', 'Down', 'Left', 'Right'].map((name, i) =>
+                                    `${name}: ${classCounts[i]}`).join(', ')}
+                            </Typography>
+                        </Box>
                     )}
-                    <Button 
+
+                    {/* Start Game button */}
+                    <Button
                         variant="contained"
-                        onClick={() => setIsRuning(!isRunning)}
+                        onClick={() => setIsRuning(true)}
                         disabled={!canPlay}
+                        fullWidth
                     >
                         {model === null
                             ? "Train the model first"
@@ -60,6 +89,26 @@ export default function PacMan() {
                             ? `Add more examples (min 8 per class)`
                             : "Start Game"}
                     </Button>
+
+                    {/* Visible warning when button is disabled */}
+                    {!canPlay && (
+                        <Box sx={{
+                            p: 1,
+                            mt: 1,
+                            backgroundColor: '#ffebee',
+                            border: '1px solid #f44336',
+                            borderRadius: 1,
+                            textAlign: 'center',
+                        }}>
+                            <Typography variant="body2" color="error" fontWeight="bold">
+                                {model === null
+                                    ? "⚠ Please train the model before playing"
+                                    : `⚠ Need at least 8 examples per class. Current: ${['Up', 'Down', 'Left', 'Right'].map((name, i) =>
+                                        `${name}: ${classCounts[i]}`).join(', ')}`
+                                }
+                            </Typography>
+                        </Box>
+                    )}
                 </>
             )}
         </>
